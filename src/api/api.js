@@ -1,4 +1,5 @@
 const { request } = require('https')
+const { setCache, getCache } = require('../utils/helper')
 
 const config = {
   api: 'api.lingualeo.com',
@@ -38,7 +39,7 @@ module.exports = {
 
       req.on('response', response => {
         if (response.headers) {
-          config.cookie = response.headers ? response.headers['set-cookie'] : null
+          setCache(response.headers['set-cookie'])
         }
       })
       
@@ -47,8 +48,9 @@ module.exports = {
   },
 
   getTranslations: word => {
-    return new Promise((resolve, reject) => {
-      if (!config.cookie) {
+    return new Promise( async (resolve, reject) => {
+      const cookie = await getCache()
+      if (!cookie) {
         reject('can\'t find cookies try run login method first')
       }
       const body = JSON.stringify({
