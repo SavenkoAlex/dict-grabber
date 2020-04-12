@@ -2,8 +2,8 @@ const api = require('./src/api/api')
 const helper = require('./src/utils/helper')
 
 const user = {
-  email: 'sanyasavva@yandex.ru',
-  password: 'w_McNQ'
+  email: '',
+  password: ''
 }
 
 async function run () {
