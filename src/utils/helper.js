@@ -4,7 +4,8 @@ const path = require('path')
 const emitter = new EventEmitter()
 
 const cacheFilePath = 'cache'
-const dictFile = path.dirname.join('dict/dict')
+const cwd = process.cwd()
+const dictFilePatch = path.join(cwd, '/dict/dict')
 
 module.exports = {
   getCache: () => {
@@ -39,10 +40,29 @@ module.exports = {
     fs.writeFileSync(cacheFilePath, cache)
   },
 
-  parseDict: () => {
-    console.log(dictFile)
-    fs.readFileSync(dictFile)
-  }
+  readDict: () => {
+    const dict = fs.readFileSync(dictFilePatch)
+    if (!Buffer.isBuffer(dict)) {
+      console.error('dict is invalid')
+      return null
+    }
+    const d1 = dict.toString('utf8')
+    const arr = []
+    let str = ''
+    for (l of d1) {
+      if (l === '\n' && str.length) {
+        arr.push(str)
+        str = ''
+        continue
+      }
+      str+=l
+    }
+    return arr.length ? arr : null
+  },
+
+  getMostFamousTranslate (translate) {
+    
+  } 
 }
 
 function parseCache (file) {

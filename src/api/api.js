@@ -78,5 +78,8 @@ module.exports = {
       req.write(body)
       req.end()
     })
+  },
+  setWord: async function (dictId, translation) {
+    
   }
 }
