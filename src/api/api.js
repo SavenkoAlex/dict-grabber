@@ -7,7 +7,7 @@ const config = {
 
   // API paths
   getTranslations: '/gettranslates',
-  addWordToDictionary: '/addword',
+  addWordToDictionary: '/SetWords', //'/addword',
   translateFromRussian: '/translate.php',
   cookie: null,
 
@@ -65,7 +65,7 @@ module.exports = {
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': body.length,
-          'Cookie': config.cookie
+          'Cookie': cookie
         }
       }
 
@@ -79,7 +79,32 @@ module.exports = {
       req.end()
     })
   },
-  setWord: async function (dictId, translation) {
-    
+  setWord: async function (params) {
+    return new Promise( async (resolve, reject) => {
+      const cookie = await getCache()
+      if (!cookie) {
+        reject('can\'t find cookies try run login method first')
+      }
+      const body = JSON.stringify(params)
+      const options = {
+        hostname: config.api,
+        path: config.addWordToDictionary,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': body.length,
+          'Cookie': cookie
+        }
+      }
+
+      const req = request(options, response => {
+        response.setEncoding('utf8')
+        response.on('data', data => {
+          resolve(data)
+        })
+      })
+      req.write(body)
+      req.end()
+    })
   }
 }

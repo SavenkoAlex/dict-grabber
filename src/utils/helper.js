@@ -57,12 +57,39 @@ module.exports = {
       }
       str+=l
     }
+    process.setMaxListeners(arr.length)
     return arr.length ? arr : null
   },
 
-  getMostFamousTranslate (translate) {
-    
-  } 
+  getMostFamousTranslate (translateString) {
+    const { translate = null, word_id: wId = null } = JSON.parse(translateString)
+    if (!translate || !wId) {
+      return
+    }
+
+    const result = {
+      action: 'add',
+      mode: 0,
+      valueList: {
+        translation: {
+          id: null,
+          main:1,
+          selected:1
+        },
+        wordSetId: null
+      },
+      wordIds:[]
+    }
+    result.wordIds.push(wId)
+    const mostFamous = translate.reduce((p, c) => {
+      return p.votes > c.votes
+        ? p
+        : c
+    }, translate[0])
+
+    result.valueList.translation.id = mostFamous.id
+    return result
+  }
 }
 
 function parseCache (file) {
